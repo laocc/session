@@ -1,0 +1,21 @@
+{
+  "name": "laocc/session",
+  "description": "php session",
+  "homepage": "https://github.com/laocc/session",
+  "authors": [
+    {
+      "name": "fazo",
+      "email": "fazo@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">7.1",
+    "laocc/helper": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "esp\\session\\": "src/"
+    }
+  }
+}
