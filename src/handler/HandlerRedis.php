@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace esp\session;
+namespace esp\session\handler;
 
 use Redis;
 use Error;
