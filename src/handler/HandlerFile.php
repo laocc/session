@@ -22,7 +22,7 @@ class HandlerFile implements SessionHandlerInterface
         $this->_prefix = $prefix;
     }
 
-    public function setDrive($drive): bool
+    public function setDriver($drive): bool
     {
         return true;
     }

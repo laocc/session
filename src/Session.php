@@ -17,11 +17,12 @@ use function esp\helper\host;
 final class Session
 {
     private $SessionHandler;
+    private $option;
 
     public function __construct(array $config)
     {
         $config += [
-            'drive' => 'redis',//驱动方式：redis,file
+            'driver' => 'redis',//驱动方式：redis,file
             'key' => 'PHPSESSID',//session在cookies中的名称
             'delay' => 0,//是否自动延期
             'prefix' => '',//session保存在redis或file中的键名前缀
@@ -42,7 +43,7 @@ final class Session
         if ($config['cookie'] < $config['expire']) $config['cookie'] = $config['expire'];
         $option = [];
 
-        if ($config['drive'] === 'file') {
+        if ($config['driver'] === 'file') {
             $option['save_path'] = serialize($config['path']);//在handlerFile->open()的第1个参数即是此值
             $this->SessionHandler = new HandlerFile(boolval($config['delay']), $config['prefix']);
 
@@ -76,6 +77,8 @@ final class Session
             $config['domain'] = host($domain);
         } else if ($config['domain'] === 'domain') {
             $config['domain'] = $domain;
+        } else if ($config['domain'] === 'self') {
+            $config['domain'] = $domain;
         }
 
         /**
@@ -98,20 +101,21 @@ final class Session
                 session_id($_GET[$option['name']]);
             }
         }
-
-        $star = session_start($option);
-        if (!$star) throw new Error('session_start Error');
+        $this->option = $option;
     }
 
     /**
      * 在redis的时候，送入已连接好的Redis对象
      *
-     * @param Redis $redis
+     * @param Redis|null $redis
      * @return bool
      */
-    public function setRedis(Redis $redis): bool
+    public function start(Redis $redis = null): bool
     {
-        return $this->SessionHandler->setDrive($redis);
+        if ($redis) $this->SessionHandler->setDriver($redis);
+        $star = session_start($this->option);
+        if (!$star) throw new Error('session_start Error');
+        return true;
     }
 
 
@@ -201,6 +205,8 @@ final class Session
      */
     public function data(string $key, $val = null)
     {
+        if (!is_array($_SESSION)) $_SESSION = [];
+
         if (is_null($val)) {
             $value = $_SESSION[$key] ?? '';
             if (empty($value) or !is_array($value)) return null;

@@ -26,7 +26,7 @@ class HandlerRedis implements SessionHandlerInterface
     }
 
 
-    public function setDrive(Redis $redis): bool
+    public function setDriver(Redis $redis): bool
     {
         $this->_Redis = &$redis;
         return true;
