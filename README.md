@@ -1,3 +1,11 @@
+# 安装：
+
+composer:
+
+```
+composer require laocc/session
+```
+
 # 引用方法：
 
 ```php
@@ -25,9 +33,10 @@ $config = [
 $_session = new Session($config);
 
 
-//若采用的是redis，且在这之前其他地方创建redis连接，这里可以送入redis实例，可省略session再次连redis
+//若采用的是redis，且在这之前其他地方创建过redis连接，这里可以先送入redis实例，省略session再次连redis
+//须注意：redis表若与之前的连接实例不同，这里不要送入，否则会保存到送入的实例表中
 
-//$redis = new \Redis();
+//$redis = new \Redis(...);
 
 
 $_session->setRedis($redis);
@@ -37,9 +46,16 @@ $_session->setRedis($redis);
 # 数据说明：
 
 若某页面原则上是不会改变任何session，为保险起见，可在页面任何地方加：session_abort();用于丢弃当前进程所有对session的改动；
+
 本类只是改变PHP存取session的介质，在使用方面没有影响，如：`$_SESSION['v']=123`，`$v=$_SESSION['v']`；
-本插件实现用redis保存session，且每个session的生存期从其自身被定义时计算起，而非PHP本身统一设置 有一个问题须注意：`$_SESSION['name']=abc`；之后若再次给`$_SESSION['name']`
-赋其他不同的值，则其生存期以第二次赋值起算起 但是，若第二次赋值与之前的值相同，并不会改变其生存期 如果只是想存到redis也可以直接设置，或修改php.ini
+
+本插件实现用redis保存session，且每个session的生存期从其自身被定义时计算起，而非PHP本身统一设置
+
+有一个问题须注意：`$_SESSION['name']=abc`；之后若再次给`$_SESSION['name']`赋其他不同的值，则其生存期以第二次赋值起算起 但是，若第二次赋值与之前的值相同，并不会改变其生存期
+
+### 简单设置
+
+如果只是想存到redis也可以直接设置，或修改`php.ini`:
 
 ```
 ini_set('session.save_handler', 'redis');
@@ -47,8 +63,15 @@ ini_set('session.save_path', 'tcp://127.0.0.1:6379');
 ini_set('session.save_path', '/tmp/redis.sock?database=0');
 ```
 
+### file查看session
+
 php.ini中默认保存到PHP，也就是服务器某个目录中， 比如默认：`session.save_path = "/tmp"`
-则在没有指定其他介质的情况下，在`/tmp`中所有`[sess_****]`文件即为session内容 如果指定redis作为介质，则用下列方法可查看session内容
+
+在`/tmp`中所有`[sess_****]`文件即为session内容
+
+### redis中查看session
+
+如果指定redis作为介质，则用下列方法可查看session内容
 
 ```
 [root@localhost ~]# redis-cli
