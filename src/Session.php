@@ -13,40 +13,6 @@ use function esp\helper\host;
 /**
  * Class Session
  * @package plugins\ext
- *
- *
- * 若某页面原则上是不会改变任何session，为保险起见，可在页面任何地方加：session_abort();用于丢弃当前进程所有对session的改动；
- *
- * 本类只是改变PHP存取session的介质，在使用方面没有影响，如：$_SESSION['v']=123，$v=$_SESSION['v']；
- *
- * 本插件实现用redis保存session，且每个session的生存期从其自身被定义时计算起，而非PHP本身统一设置
- * 有一个问题须注意：$_SESSION['name']=abc；之后若再次给$_SESSION['name']赋其他不同的值，则其生存期以第二次赋值起算起
- * 但是，若第二次赋值与之前的值相同，并不会改变其生存期
- *
- *
- * 如果只是想存到redis也可以直接设置，或修改php.ini
- * ini_set('session.save_handler', 'redis');
- * ini_set('session.save_path', 'tcp://127.0.0.1:6379');
- * ini_set('session.save_path', '/tmp/redis.sock?database=0');
- *
- * php.ini中默认保存到PHP，也就是服务器某个目录中，
- * 比如默认：session.save_path = "/tmp"
- * 则在没有指定其他介质的情况下，在/tmp中所有[sess_****]文件即为session内容
- *
- * 如果指定redis作为介质，则用下列方法可查看session内容
- * [root@localhost ~]# redis-cli
- * 127.0.0.1:6379> ping
- * PONG
- *
- * 列出所有键：
- * 127.0.0.1:6379> keys PHPREDIS*
- * 1) "PHPREDIS_SESSION :57105pkee2ov7b49il470ctv51"
- *
- * 显示内容：
- * 127.0.0.1:6379> get PHPREDIS_SESSION :57105pkee2ov7b49il470ctv51
- * "val|s:19:\"2017-09-16 14:47:45\";"
- *
- *
  */
 final class Session
 {
@@ -62,7 +28,6 @@ final class Session
             'path' => '/',//设定会话 cookie 的路径，一般就为网站根目录，也可以指定如：/admin
             'domain' => 'host',//host或domain；在host还是域名下有效，见下面说明
             'limiter' => 'nocache',//客户端缓存方法，没太明白这个
-            'object' => null,
             'expire' => 86400,//session保存时间，在redis时，过了这个时间就删除，file下无作用
             'cookie' => 86400,//客户端cookies保存时间
 
@@ -83,7 +48,7 @@ final class Session
 
         } else {
             $option['save_path'] = serialize($config['redis']);//这里送入redis的配置，在handlerRedis->open()的第1个参数即是此值
-            $this->SessionHandler = new HandlerRedis(boolval($config['delay']), $config['prefix'], $config['object']);
+            $this->SessionHandler = new HandlerRedis(boolval($config['delay']), $config['prefix']);
         }
         $handler = session_set_save_handler($this->SessionHandler, true);
         if (!$handler) throw new Error('session_set_save_handler Error');
