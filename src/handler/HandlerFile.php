@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace esp\session\handler;
 
+use esp\helper\library\Error;
 use SessionHandlerInterface;
+use function esp\helper\mk_dir;
 
 class HandlerFile implements SessionHandlerInterface
 {
@@ -27,10 +29,16 @@ class HandlerFile implements SessionHandlerInterface
         return true;
     }
 
+    /**
+     * @param string $savePath
+     * @param string $sessionName
+     * @return bool
+     * @throws Error
+     */
     function open($savePath, $sessionName)
     {
         $this->savePath = unserialize($savePath);
-        if (!is_dir($this->savePath)) mkdir($this->savePath, 0777);
+        mk_dir($this->savePath, 0777);
         return true;
     }
 
