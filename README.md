@@ -17,7 +17,7 @@ $config = [
     'delay' => 0,//是否自动延期
     'prefix' => '',//session保存在redis或file中的键名前缀
     'path' => '/',//设定会话 cookie 的路径，一般就为网站根目录，也可以指定如：/admin
-    'domain' => 'host',//host或domain；在host还是域名下有效
+    'domain' => 'domain',//在哪个域名下有效，domain则取值实际请求的域名，或在这里指定域名
     'limiter' => 'nocache',//客户端缓存方法，没太明白这个
     'expire' => 86400,//session保存时间，在redis中过了这个时间就删除，file下无作用
     'cookie' => 86400,//客户端cookies保存时间
@@ -37,7 +37,6 @@ $_session = new Session($config);
 //须注意：redis表若与之前的连接实例不同，这里不要送入，否则会保存到送入的实例表中
 
 //$redis = new \Redis(...);
-
 
 $_session->setRedis($redis);
 

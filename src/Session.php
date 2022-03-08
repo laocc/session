@@ -7,7 +7,6 @@ use \Error;
 use \Redis;
 use esp\session\handler\HandlerFile;
 use esp\session\handler\HandlerRedis;
-use function esp\helper\host;
 
 
 /**
@@ -27,7 +26,7 @@ final class Session
             'delay' => 0,//是否自动延期
             'prefix' => '',//session保存在redis或file中的键名前缀
             'path' => '/',//设定会话 cookie 的路径，一般就为网站根目录，也可以指定如：/admin
-            'domain' => 'host',//host或domain；在host还是域名下有效，见下面说明
+            'domain' => 'domain',//host或domain；在host还是域名下有效，见下面说明
             'limiter' => 'nocache',//客户端缓存方法，没太明白这个
             'expire' => 86400,//session保存时间，在redis时，过了这个时间就删除，file下无作用
             'cookie' => 86400,//客户端cookies保存时间
@@ -72,13 +71,10 @@ final class Session
         $option['cookie_secure'] = (getenv('HTTP_HTTPS') === 'on' or getenv('HTTPS') === 'on');//指定是否仅通过安全连接发送 cookie。默认为 off。如果启用了https则要启用
         $option['cookie_httponly'] = true;//只能PHP读取，JS禁止
 
-        $domain = explode(':', getenv('HTTP_HOST') . ':')[0];
-        if ($config['domain'] === 'host') {
-            $config['domain'] = host($domain);
-        } else if ($config['domain'] === 'domain') {
-            $config['domain'] = $domain;
-        } else if ($config['domain'] === 'self') {
-            $config['domain'] = $domain;
+        $domain = $config['domain'] ?? 'domain';
+        if ($domain === 'domain' or $domain === 'self') {
+            $hostInfo = explode(':', getenv('HTTP_HOST') . ':')[0];
+            $config['domain'] = $hostInfo;
         }
 
         /**
