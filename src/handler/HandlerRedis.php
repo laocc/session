@@ -83,11 +83,11 @@ class HandlerRedis implements SessionHandlerInterface
      */
     public function read($session_id)
     {
-        $session = $this->_Redis->get($session_id);
-        if (!$session) $session = [];
-        if (is_string($session)) $session = unserialize($session);
-        $this->_realKey = md5(serialize($session));
-        return $session;
+        $dataString = $this->_Redis->get($session_id);
+        if (!$dataString) $dataString = 'a:0:{}';
+        if (is_array($dataString)) $dataString = serialize($dataString);
+        $this->_realKey = md5($dataString);
+        return $dataString;
     }
 
 
@@ -124,7 +124,7 @@ class HandlerRedis implements SessionHandlerInterface
      */
     public function gc($maxLifetime)
     {
-        return 1;
+        return true;
     }
 
 
