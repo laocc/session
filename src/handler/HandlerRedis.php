@@ -61,6 +61,7 @@ class HandlerRedis implements SessionHandlerInterface
             throw new Error("Redis密码错误，无法连接服务器。");
         }
 
+        $this->_Redis->setOption(\Redis::OPT_READ_TIMEOUT, '-1');
         $this->_Redis->setOption(\Redis::OPT_SERIALIZER, strval(\Redis::SERIALIZER_PHP));//序列化方式
 
         $select = $this->_Redis->select(intval($conf['db']));
@@ -82,9 +83,10 @@ class HandlerRedis implements SessionHandlerInterface
      */
     public function read($session_id)
     {
-        $dataString = $this->_Redis->get($session_id);
-        $session = (!$dataString) ? 'a:0:{}' : serialize($dataString);
-        $this->_realKey = md5($session);
+        $session = $this->_Redis->get($session_id);
+        if (!$session) $session = [];
+        if (is_string($session)) $session = unserialize($session);
+        $this->_realKey = md5(serialize($session));
         return $session;
     }
 
@@ -166,6 +168,7 @@ class HandlerRedis implements SessionHandlerInterface
     public function write($session_id, $session_data)
     {
         if (empty($session_data)) return true;
+        if (is_array($session_data)) $session_data = serialize($session_data);
         if ($this->_realKey === md5($session_data)) return true;//session未变更
 
         if ($this->_delay) {
