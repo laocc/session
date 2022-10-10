@@ -16,7 +16,7 @@ use esp\session\handler\HandlerRedis;
 final class Session
 {
     private $SessionHandler;
-    private $option;
+    private array $option;
 
     public function __construct(array $config)
     {

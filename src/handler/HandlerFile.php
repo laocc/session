@@ -7,10 +7,10 @@ use SessionHandlerInterface;
 
 class HandlerFile implements SessionHandlerInterface
 {
-    private $savePath;
-    private $_delay;//自动延时，windows下无效
-    private $_prefix;
-    private $_realKey;
+    private string $savePath;
+    private bool $_delay;//自动延时，windows下无效
+    private string $_prefix;
+    private string $_realKey;
 
     /**
      * @param bool $delay 自动延时，windows下无效

@@ -9,10 +9,10 @@ use SessionHandlerInterface;
 
 class HandlerRedis implements SessionHandlerInterface
 {
-    private $_Redis;
-    private $_delay;
-    private $_prefix;
-    private $_realKey;
+    private Redis $_Redis;
+    private bool $_delay;
+    private string $_prefix;
+    private string $_realKey;
 
     /**
      * SessionRedis constructor.
@@ -43,7 +43,7 @@ class HandlerRedis implements SessionHandlerInterface
      */
     public function open($save_path, $session_name)
     {
-        if (!is_null($this->_Redis)) return true;
+        if (isset($this->_Redis)) return true;
 
         $conf = unserialize($save_path);
 
