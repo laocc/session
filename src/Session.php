@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace esp\session;
 
-use \Error;
-use \Redis;
+use Redis;
+use esp\error\Error;
 use esp\session\handler\HandlerFile;
 use esp\session\handler\HandlerRedis;
 
@@ -18,6 +18,9 @@ final class Session
     private $SessionHandler;
     private array $option;
 
+    /**
+     * @throws Error
+     */
     public function __construct(array $config)
     {
         $config += [
