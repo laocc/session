@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace esp\session\handler;
 
 use Redis;
-use Error;
+use esp\error\Error;
 use SessionHandlerInterface;
 
 class HandlerRedis implements SessionHandlerInterface
