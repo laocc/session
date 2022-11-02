@@ -87,8 +87,7 @@ final class Session
          * 若为前者，则只在 www.abc.com 下能读取
          */
         $option['cookie_domain'] = $config['domain'];
-
-        if (version_compare(PHP_VERSION, '7.3', '>=')) $option['cookie_samesite'] = 'Lax';
+        $option['cookie_samesite'] = 'Lax';
 
         //允许从URL或POST中读取session值
         if ($option['use_trans_sid']) {
@@ -108,6 +107,7 @@ final class Session
      *
      * @param Redis|null $redis
      * @return bool
+     * @throws Error
      */
     public function start(Redis $redis = null): bool
     {
