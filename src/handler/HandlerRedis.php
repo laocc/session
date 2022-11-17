@@ -40,8 +40,9 @@ class HandlerRedis implements SessionHandlerInterface
      * @param string $save_path
      * @param string $session_name 此值是cookies name
      * @return bool
+     * @throws Error
      */
-    public function open($save_path, $session_name)
+    public function open($save_path, $session_name): bool
     {
         if (isset($this->_Redis)) return true;
 
@@ -108,7 +109,7 @@ class HandlerRedis implements SessionHandlerInterface
      * 此回调函数操作成功返回 TRUE，反之返回 FALSE。
      * 必须返回true，否则在一个新的连接时，session_regenerate_id()总是出错
      */
-    public function destroy($session_id)
+    public function destroy($session_id): bool
     {
         $d = $this->_Redis->del($session_id);
         return boolval($d);
@@ -122,7 +123,7 @@ class HandlerRedis implements SessionHandlerInterface
      * 传入到此回调函数的 lifetime 参数由 session.gc_maxlifetime 设置。
      * 此回调函数操作成功返回 TRUE，反之返回 FALSE。
      */
-    public function gc($maxLifetime)
+    public function gc($maxLifetime): bool
     {
         return true;
     }
@@ -165,7 +166,7 @@ class HandlerRedis implements SessionHandlerInterface
      * @param string $session_data
      * @return bool
      */
-    public function write($session_id, $session_data)
+    public function write($session_id, $session_data): bool
     {
         if (empty($session_data)) return true;
         if (is_array($session_data)) $session_data = serialize($session_data);
@@ -190,7 +191,7 @@ class HandlerRedis implements SessionHandlerInterface
      * close 回调函数类似于类的析构函数。
      * 此回调函数操作成功返回 TRUE，反之返回 FALSE。
      */
-    public function close()
+    public function close(): bool
     {
         try {
             $this->_Redis->close();
