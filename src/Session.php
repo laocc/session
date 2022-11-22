@@ -139,24 +139,6 @@ final class Session
         return session_id();
     }
 
-    /**
-     * 设置某值，同时重新设置有效时间
-     *
-     * @param $key
-     * @param null $value
-     * @return Session
-     */
-    public function set($key, $value = null): Session
-    {
-        if (is_array($key)) {
-            foreach ($key as $k => $v) {
-                $_SESSION[$k] = $v;
-            }
-        } else {
-            $_SESSION[$key] = $value;
-        }
-        return $this;
-    }
 
     /**
      * 读取一个值，可以直接读 $_SESSION[$key]
@@ -194,6 +176,25 @@ final class Session
     public function del(string ...$keys): Session
     {
         foreach ($keys as $key) $_SESSION[$key] = null;
+        return $this;
+    }
+
+    /**
+     * 设置某值，同时重新设置有效时间
+     *
+     * @param $key
+     * @param null $value
+     * @return Session
+     */
+    public function set($key, $value = null): Session
+    {
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $_SESSION[$k] = $v;
+            }
+        } else {
+            $_SESSION[$key] = $value;
+        }
         return $this;
     }
 
