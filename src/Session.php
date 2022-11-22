@@ -73,12 +73,7 @@ final class Session
         $option['cookie_path'] = $config['path'];//指定了要设定会话 cookie 的路径。默认为 /。
         $option['cookie_secure'] = (getenv('HTTP_HTTPS') === 'on' or getenv('HTTPS') === 'on');//指定是否仅通过安全连接发送 cookie。默认为 off。如果启用了https则要启用
         $option['cookie_httponly'] = true;//只能PHP读取，JS禁止
-
-        $domain = $config['domain'] ?? 'domain';
-        if ($domain === 'domain' or $domain === 'self') {
-            $hostInfo = explode(':', getenv('HTTP_HOST') . ':')[0];
-            $config['domain'] = $hostInfo;
-        }
+        $option['cookie_samesite'] = 'Lax';
 
         /**
          * 有域名www.abc.com和abc.com
@@ -86,8 +81,8 @@ final class Session
          * 若为后者，则在 *.abc.com 下都能读取
          * 若为前者，则只在 www.abc.com 下能读取
          */
-        $option['cookie_domain'] = $config['domain'];
-        $option['cookie_samesite'] = 'Lax';
+        $option['cookie_domain'] = _DOMAIN;
+        if (strtolower($config['scope']) === 'host') $option['cookie_domain'] = _HOST;
 
         //允许从URL或POST中读取session值
         if ($option['use_trans_sid']) {
