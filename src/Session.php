@@ -82,7 +82,7 @@ final class Session
          * 若为前者，则只在 www.abc.com 下能读取
          */
         $option['cookie_domain'] = _DOMAIN;
-        if (strtolower($config['scope']) === 'host') $option['cookie_domain'] = _HOST;
+        if (strtolower($config['scope'] ?? '') === 'host') $option['cookie_domain'] = _HOST;
 
         //允许从URL或POST中读取session值
         if ($option['use_trans_sid']) {

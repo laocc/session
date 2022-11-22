@@ -75,16 +75,17 @@ class HandlerRedis implements SessionHandlerInterface
 
     /**
      * 第二个被调用
-     * @param string $session_id
+     * @param string $id
      * @return string
      * 如果会话中有数据，read 回调函数必须返回将会话数据编码（序列化）后的字符串。
      * 如果会话中没有数据，read 回调函数返回空字符串。
      * 在自动开始会话或者通过调用 session_start() 函数手动开始会话之后，PHP 内部调用 read 回调函数来获取会话数据。
      * 在调用 read 之前，PHP 会调用 open 回调函数。
      */
-    public function read($session_id)
+    #[ReturnTypeWillChange]
+    public function read($id): string
     {
-        $dataString = $this->_Redis->get($session_id);
+        $dataString = $this->_Redis->get($id);
         if (!$dataString) $dataString = 'a:0:{}';
         if (is_array($dataString)) $dataString = serialize($dataString);
         $this->_realKey = md5($dataString);
@@ -117,15 +118,15 @@ class HandlerRedis implements SessionHandlerInterface
 
     /**
      * @param int $maxLifetime
-     * @return bool
+     * @return int
      * 为了清理会话中的旧数据，PHP 会不时的调用垃圾收集回调函数。
      * 调用周期由 session.gc_probability 和 session.gc_divisor 参数控制。
      * 传入到此回调函数的 lifetime 参数由 session.gc_maxlifetime 设置。
      * 此回调函数操作成功返回 TRUE，反之返回 FALSE。
      */
-    public function gc($maxLifetime): bool
+    public function gc($maxLifetime): int
     {
-        return true;
+        return 1;
     }
 
 
