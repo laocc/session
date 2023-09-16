@@ -196,7 +196,7 @@ class HandlerRedis implements SessionHandlerInterface
     {
         try {
             $this->_Redis->close();
-        } catch (Error $e) {
+        } catch (\Error|\Exception $e) {
             return false;
         }
         return true;
