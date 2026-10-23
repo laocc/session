@@ -104,7 +104,7 @@ final class Session
      * @return bool
      * @throws Error
      */
-    public function start(Redis $redis = null): bool
+    public function start(?Redis $redis = null): bool
     {
         if ($redis) $this->SessionHandler->setDriver($redis);
         $star = session_start($this->option);
@@ -118,7 +118,7 @@ final class Session
      * @param int|null $ttl
      * @return bool|int
      */
-    public function ttl(int $ttl = null)
+    public function ttl(?int $ttl = null)
     {
         return $this->SessionHandler->ttl($ttl);
     }

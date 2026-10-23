@@ -135,7 +135,7 @@ class HandlerRedis implements SessionHandlerInterface
      * @param int|null $ttl
      * @return bool|int
      */
-    public function ttl(int $ttl = null)
+    public function ttl(?int $ttl = null)
     {
         if ($ttl) {
             return $this->_Redis->expire(session_id(), $ttl);
